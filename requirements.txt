@@ -1,0 +1,9 @@
+functions-framework==3.2.1
+pandas
+numpy
+scikit-learn
+flask
+google-python-cloud-debugger
+fastparquet
+faiss-cpu
+nltk
