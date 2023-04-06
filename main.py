@@ -14,26 +14,6 @@ urllib.request.urlretrieve(
 data = pd.read_parquet("myntra-data.parquet", engine="fastparquet")
 
 
-"""
- def ngrams(string, n=3):
-    string = string.encode("ascii", errors="ignore").decode()
-    string = string.lower()
-    chars_to_remove = [")", "(", ".", ",", "[", "]", "{", "}", "'"]
-    rx = '[' + re.escape("".join(chars_to_remove)) + "]"
-    string = re.sub(rx, "", string)
-    string = string.replace("&", "and")
-    string = string.replace(",", " ")
-    string = string.replace("-", " ")
-    string = re.sub(" +", " ", string).strip()
-    string = " " + string + " "
-    string = re.sub(r'[,-./]|\sBD', r'', string)
-    results = zip(*[string[i:] for i in range(n)])
-    return ["".join(ngram) for ngram in results]
-"""
-
-
-"""min_df=1, analyzer=ngrams"""
-
 # Define a function to preprocess text by stemming
 vectorizer = TfidfVectorizer()
 gender_tfidf = TfidfVectorizer()
@@ -111,39 +91,6 @@ def process_recommendations(query: str, color: str, price: int, gender: str, num
     diff = time.time() - begin
     print(f"Prediction took: {diff}")
     return results[:5]
-
-    """query_vector = vectorizer.transform([query])
-    print(query_vector.shape)
-    query_vector = vectorizer.transform([query]).transpose()
-    print(query_vector.shape)
-    similarity = similarity_matrix.dot(query_vector.T).toarray().ravel()
-    recommendations = data.iloc[np.argsort(-similarity)
-                                ][:5]['description'].tolist()
-    print(recommendations)"""
-
-    filtered = data.loc[data["Individual_category"].str.fullmatch(query)]
-    filtered = filtered.loc[filtered["Description"].str.contains(color)]
-    # cosine_similarities = linear_kernel(product_vectors, query_vector).flatten()
-    # cosine_similarities = query_vector * product_vectors.T
-    top_indices = []
-    for i, row in filtered.iterrows():  # cosine_similarities.argsort()[::-1]:
-        if row["OriginalPrice (in Rs)"] <= price and row["category_by_Gender"].lower() == gender.lower():
-            top_indices.append(i)
-        top_indices = top_indices[:num_recommendations]
-
-    top_products = data.iloc[top_indices]
-    # Sort the top products by discount price
-    top_products = top_products.sort_values(by='Ratings', ascending=False)
-
-    recommendations = []
-    for _, product in top_products.iterrows():
-        name = product['BrandName']
-        description = product['Description']
-        price = product['OriginalPrice (in Rs)']
-        url = product['URL']
-        recommendations.append(
-            {'name': name, 'description': description, 'price': price, 'url': url})
-    return recommendations
 
 
 @functions_framework.http
